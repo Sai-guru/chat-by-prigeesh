@@ -6,6 +6,7 @@ import { sendWelcomeEmail } from '../emails/emailHandler.js';
 import {ENV} from '../lib/env.js';
 
 
+// @POST method - /api/auth/signup for user registration
 export const signup = async(req: Request, res: Response) => {
     const {fullName , email , password} = req.body;
     try {
@@ -48,4 +49,29 @@ export const signup = async(req: Request, res: Response) => {
 }
 
 
+// @POST method - /api/auth/login for user login
+export const login = async(req:Request,res:Response) => {
+    const {email,password} = req.body;
+    try{
+        const user = await User.findOne({email});
+        if(!user) return res.status(400).json({message: 'Invalid credentials'});
 
+        const passMatch = await bcrypt.compare(password,user.password);
+        if(!passMatch) return res.status(400).json({message: 'Invalid credentials'});
+        
+        generateToken(user._id,res as Response);
+        res.status(200).json({message: 'Login successful',user_fullName: user.fullName});
+   
+    }catch(err){
+        console.error("Login error:", err);
+        res.status(500).json({message: 'Internal server error'});
+    }
+};
+
+
+// @POST method - /api/auth/logout for user logout
+export const logout = (req:Request,res:Response) => {
+    res.cookie('jwt','',{maxAge:0});
+    
+    res.status(200).json({message: 'Logout successful'});
+};
