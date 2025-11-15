@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
-import User from '../models/User.js';
+import {User} from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import { generateToken } from '../lib/utils.js';
 import { sendWelcomeEmail } from '../emails/emailHandler.js';
 import {ENV} from '../lib/env.js';
+import cloudinary from '../lib/cloudinary.js';
 
 
 // @POST method - /api/auth/signup for user registration
@@ -60,7 +61,11 @@ export const login = async(req:Request,res:Response) => {
         if(!passMatch) return res.status(400).json({message: 'Invalid credentials'});
         
         generateToken(user._id,res as Response);
-        res.status(200).json({message: 'Login successful',user_fullName: user.fullName});
+        res.status(200).json({message: 'Login successful',
+            user_fullName: user.fullName,
+            user_id: user._id,
+            user_email: user.email,
+        });
    
     }catch(err){
         console.error("Login error:", err);
@@ -74,4 +79,24 @@ export const logout = (req:Request,res:Response) => {
     res.cookie('jwt','',{maxAge:0});
     
     res.status(200).json({message: 'Logout successful'});
+};
+
+
+// @PUT method - /api/auth/update-profile for updating user profile\
+export const updateProfile = async(req:Request,res:Response) => {
+
+    try {
+        const {profilePic} = req.body;
+    if(!profilePic) return res.status(400).json({message: 'Profile piv is required'});
+    
+    const userId = req.user._id;
+   const uploadResp = await cloudinary.uploader.upload(profilePic);
+    const updated = await User.findByIdAndUpdate(userId,
+        {profilePic: uploadResp.secure_url},{new:true});
+
+   res.status(200).json("updated pfp success"+updated);
+    }catch(err){
+        console.error("Update profile error:", err);
+        res.status(500).json({message: 'Internal server error'});
+    }   
 };

@@ -5,9 +5,11 @@ import authRoutes from './routes/auth.route.js';
 import messageRoutes from './routes/message.route.js';
 import { connectDB } from './lib/db.js';
 import { ENV } from './lib/env.js';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 
 const PORT : number = Number(ENV.PORT) || 5000;
 app.use('/api/auth', authRoutes);

@@ -9,7 +9,7 @@ export const generateToken = (userId: any,res : Response) => {
         httpOnly: true,
         sameSite: 'strict',
         secure: ENV.NODE_ENV === 'development' ? false : true,
-        maxAge: 6 * 24 * 60 * 60 * 1000, // 600 days
+        maxAge: 6 * 24 * 60 * 60 * 1000, // 6 days
     });
     return token;
 }
