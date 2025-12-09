@@ -11,9 +11,10 @@ import cookieParser from "cookie-parser";
 const app = express();
 
 const corsOptions = {
-  origin: ENV.CLIENT_URL || "http://localhost:5173",
+  origin: ENV.NODE_ENV === "production" ? undefined : ENV.CLIENT_URL,
   credentials: true,
 };
+
 
 app.use(cors(corsOptions));
 app.use(express.json());
