@@ -11,7 +11,7 @@ import cookieParser from "cookie-parser";
 const app = express();
 
 const corsOptions = {
-  origin: ENV.NODE_ENV === "production" ? undefined : ENV.CLIENT_URL,
+  origin: ENV.NODE_ENV === "production" ? ENV.CLIENT_URL : "*",
   credentials: true,
 };
 
