@@ -25,15 +25,15 @@ app.use("/api/messages", messageRoutes);
 
 const __dirname = path.resolve();
 
-if (ENV.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+// if (ENV.NODE_ENV === "production") {
+//   app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-  // Express 5 compatible catch-all
-  // Catch all remaining routes and serve index.html
-  app.use((req: Request, res: Response) => {
-    res.sendFile(path.join(__dirname, "../frontend/dist", "index.html"));
-  });
-}
+//   // Express 5 compatible catch-all
+//   // Catch all remaining routes and serve index.html
+//   app.use((req: Request, res: Response) => {
+//     res.sendFile(path.join(__dirname, "../frontend/dist", "index.html"));
+//   });
+// }
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
